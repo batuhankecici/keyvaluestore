@@ -150,3 +150,38 @@ func TestWriteToFile(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkSet(b *testing.B) {
+	ims := NewInMemoryStore()
+
+	k := "batuhan"
+	v := "kecici"
+
+	setValueReq := service.SetValueRequest{
+		Key:   k,
+		Value: v,
+	}
+
+	for i := 0; i < b.N; i++ {
+		ims.SetValue(setValueReq)
+	}
+}
+
+func BenchmarkGet(b *testing.B) {
+	ims := NewInMemoryStore()
+
+	k := "batuhan"
+	v := "kecici"
+
+	setValueReq := service.SetValueRequest{
+		Key:   k,
+		Value: v,
+	}
+	getValueReq := service.GetValueRequest{
+		Key: k,
+	}
+	ims.SetValue(setValueReq)
+	for i := 0; i < b.N; i++ {
+		ims.GetValue(getValueReq)
+	}
+}
