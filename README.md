@@ -6,9 +6,6 @@ In memory key value store application with API service
 go get -u github.com/batuhankecici/keyvaluestore
 ```
 
-# Dependencies
-
-Http Server adress using :8080 port.You should send a request to "localhost:8080"
 # Usage
 
 ```go
@@ -27,26 +24,25 @@ func main() {
 ```
 # Endpoints
 
-Keyvaluestore has 4 endpoints.
 Get handler response key value pair from memory
 ```zsh
-	localhost:8080/get
+localhost:****/get
 ```
 Set handler sets key value pair to memory
 ```zsh
-	localhost:8080/set
+localhost:****/set
 ```
 Delete handler deletes key value pair to memory
 ```zsh
-	localhost:8080/delete
+localhost:****/delete
 ```
 Getall handler gets all key value pair in memory
 ```zsh
-	localhost:8080/getall
+localhost:****/getall
 ```
 
 # Benchmark Tests
-**Test Code:**
+**Test Codes:**
 
 ```go
 func BenchmarkCreateHttpHandler(b *testing.B) {
@@ -57,9 +53,46 @@ func BenchmarkCreateHttpHandler(b *testing.B) {
 	}
 }
 
+func BenchmarkSet(b *testing.B) {
+	ims := NewInMemoryStore()
+
+	k := "batuhan"
+	v := "kecici"
+
+	setValueReq := service.SetValueRequest{
+		Key:   k,
+		Value: v,
+	}
+
+	for i := 0; i < b.N; i++ {
+		ims.SetValue(setValueReq)
+	}
+}
+
+func BenchmarkGet(b *testing.B) {
+	ims := NewInMemoryStore()
+
+	k := "batuhan"
+	v := "kecici"
+
+	setValueReq := service.SetValueRequest{
+		Key:   k,
+		Value: v,
+	}
+	getValueReq := service.GetValueRequest{
+		Key: k,
+	}
+	ims.SetValue(setValueReq)
+	for i := 0; i < b.N; i++ {
+		ims.GetValue(getValueReq)
+	}
+}
+
 ```
 
 **Results:**
 |Function|Time|Bytes Allocated|Objects Allocated|
 |:-------|:--:|:-------------:|:---------------:|
 |CreateHTTPHandler|674.7 ns/op|624 B/op|7 allocs/op|
+|Set|202.1 ns/op|64 B/op|2 allocs/op|
+|Get|28.20 ns/op|0 B/op|0 allocs/op|
